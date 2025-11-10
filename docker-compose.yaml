@@ -1,0 +1,14 @@
+version: "0.1"
+
+services:
+  fastify:
+    build: .
+    container_name: auditlog
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_ENV=local
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start
