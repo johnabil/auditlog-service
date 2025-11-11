@@ -1,15 +1,8 @@
 import {join} from 'node:path'
-import AutoLoad, {AutoloadPluginOptions} from '@fastify/autoload'
-import {FastifyPluginAsync, FastifyServerOptions} from 'fastify'
+import AutoLoad from '@fastify/autoload'
+import {FastifyPluginAsync} from 'fastify'
 
-export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {
-
-}
-
-// Pass --options via CLI arguments in command to enable these options.
-const options: AppOptions = {}
-
-const app: FastifyPluginAsync<AppOptions> = async (
+const app: FastifyPluginAsync = async (
     fastify,
     opts
 ): Promise<void> => {
@@ -36,4 +29,4 @@ const app: FastifyPluginAsync<AppOptions> = async (
 }
 
 export default app
-export {app, options}
+export {app}
