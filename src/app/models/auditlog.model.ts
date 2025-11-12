@@ -14,9 +14,13 @@ export class AuditLog extends Model {
 
 export const initModel = (sequelize: Sequelize) => {
     AuditLog.init({
-        id: DataTypes.BIGINT,
-        user_id: DataTypes.BIGINT,
-        transaction_id: DataTypes.UUIDV4,
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        user_id: DataTypes.INTEGER,
+        transaction_id: DataTypes.UUID,
         action: DataTypes.STRING,
         before: DataTypes.JSON,
         after: DataTypes.JSON,
@@ -27,4 +31,6 @@ export const initModel = (sequelize: Sequelize) => {
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     });
+
+    return AuditLog;
 };

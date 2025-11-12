@@ -2,11 +2,38 @@ services:
   fastify:
     build: .
     container_name: auditlog
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
-      - "3000:3000"
+      - "${PORT}:3000"
     environment:
-      - APP_ENV=local
+      - APP_NAME=${APP_NAME}
+      - DB_URL=${DB_URL}
+      - PORT=${PORT}
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     command: npm start
+    #only used to connect to local db if needed
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  db:
+    image: postgres:17-alpine3.22
+    container_name: auditlog_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ~/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
