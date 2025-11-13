@@ -1,23 +1,39 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# Audit Log service
 
-## Available Scripts
+in this service we have two methods of communication
 
-In the project directory, you can run:
+1. REST API (used for other service to query on audit logs)
+   and it's preferred because we need to wait for it's response
+   in other services.
+2. Redis Streams (used for audit logs to be stored better
+   than waiting for the https request) and it's
+   better to use because it has built in plugin at fastify.
 
-### `npm run dev`
+### Audit Log consistency
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+we made sure that the audit log is consistent by using redis streams.
+and if any transaction fails, it will be rolled back and the audit log
+will be deleted accordingly through sending event with transaction deleted
+so we can make sure that every audit log has a corresponding transaction.
 
-### `npm start`
+### Audit log schema
 
-For production mode
+- id
+- timestamp (created and updated at)
+- user_id
+- transaction_id
+- action
+- before (transaction metadata before the action)
+- after (transaction metadata after the action)
 
-### `npm run test`
+### APIs
 
-Run the test cases.
+``
+GET /logs (paginated with filtering by user_id, transaction_id)
+``
 
-## Learn More
+### Starting the service
 
-To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
+You can start the service using docker compose and it's preferred to
+use local db connection rather than docker db connection.
+`docker compose up --build`

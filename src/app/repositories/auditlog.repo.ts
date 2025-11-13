@@ -10,7 +10,6 @@ export class AuditLogRepository {
     async list(filters: object = {}, offset: number = 0, limit: number = 10) {
         let query: Array<any> = [];
 
-        console.log(filters);
         if ("user_id" in filters && filters.user_id !== undefined) {
             query.push({user_id: filters.user_id});
         }

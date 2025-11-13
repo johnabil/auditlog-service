@@ -1,6 +1,7 @@
 import {FastifyInstance} from "fastify";
 import {FastifyRedis} from "@fastify/redis";
 import {AuditLogRepository} from "../repositories/auditlog.repo";
+import {AuditLog} from "../models/auditlog.model";
 
 export const messagesConsumer = async (fastify: FastifyInstance) => {
     const redisClient: FastifyRedis = fastify.redis;
@@ -32,13 +33,23 @@ export const messagesConsumer = async (fastify: FastifyInstance) => {
 
                     switch (data.event) {
                         case 'TransactionCreated':
+                            const transaction = data.transaction;
                             await auditLogRepo.create({
                                 user_id: data.user_id,
-                                transaction_id: data.transaction_id,
-                                action: data.event,
-                                before: data.before,
-                                after: data.after
+                                transaction_id: data.id,
+                                action: data.transaction,
+                                before: transaction,
+                                after: transaction
                             });
+                            break;
+                        case 'TransactionUpdated':
+                            let auditLog = await AuditLog.findOne({where: {transaction_id: data.id}});
+                            if (auditLog) {
+                                auditLog.action = data.event;
+                                auditLog.before = auditLog.after;
+                                auditLog.after = data.transaction;
+                                await auditLog.save();
+                            }
                             break;
                         case 'TransactionDeleted':
                             await auditLogRepo.destroy(data.transaction_id);

@@ -1,7 +1,7 @@
 import {AuditLogRepository} from "../repositories/auditlog.repo";
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 
-export class AuditlogController {
+export class AuditLogController {
     private readonly auditLogRepo;
 
     constructor(fastify: FastifyInstance) {

@@ -1,8 +1,8 @@
 import {FastifyInstance} from 'fastify'
-import {AuditlogController} from "../app/controllers/auditlog.controller";
+import {AuditLogController} from "../app/controllers/auditlog.controller";
 
 const routes = async function (fastify: FastifyInstance) {
-    const AuditLogController = new AuditlogController(fastify);
+    const logsController = new AuditLogController(fastify);
 
     fastify.get("/", async () => {
         return {
@@ -10,7 +10,7 @@ const routes = async function (fastify: FastifyInstance) {
         }
     });
 
-    fastify.get("/auditlogs", AuditLogController.list.bind(AuditLogController));
+    fastify.get("/logs", logsController.list.bind(logsController));
 }
 
 export default routes
